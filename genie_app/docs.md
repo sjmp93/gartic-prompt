@@ -25,6 +25,10 @@ The Genie GuessR application is organized as follows:
 *   `requirements.txt`: Located at the project root, this file lists all necessary Python dependencies for the project.
 *   `venv/`: (If created by the user following setup instructions) Directory for the Python virtual environment.
 
+## Running with Docker
+
+For a consistent development environment and easy setup, running the application using Docker and Docker Compose is recommended. Please refer to the main [README.md](../README.md#running-with-docker-recommended-for-development) for detailed instructions on how to run the project with Docker.
+
 ## API Endpoints
 The application provides the following API endpoints:
 

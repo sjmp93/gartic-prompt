@@ -130,4 +130,7 @@ def get_leaderboard():
     return jsonify(leaderboard[:LEADERBOARD_MAX_SIZE])
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    # Make sure the app runs on 0.0.0.0 to be accessible from Docker
+    # and explicitly set the port. Debug should ideally be False for production.
+    # For this project, keeping debug=True for simplicity as per earlier setup.
+    app.run(host='0.0.0.0', port=5000, debug=True)

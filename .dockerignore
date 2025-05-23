@@ -1,0 +1,42 @@
+# Git
+.git
+.gitignore
+
+# Docker
+Dockerfile
+.dockerignore
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+*.egg-info/
+.tox/
+
+# IDEs and editors
+.idea/
+.vscode/
+*.project
+*.tmproj
+*.sublime-workspace
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Local instance data (optional, but good practice if it shouldn't be in image)
+# leaderboard.json 
+# If you want a fresh leaderboard every time, or manage it via volumes in compose.
+# For now, let's not explicitly ignore leaderboard.json as the Dockerfile doesn't copy it.
+# If it were copied, ignoring it would prevent the local copy from overwriting the one in the image.
+
+# Other
+*.log
+*.swp

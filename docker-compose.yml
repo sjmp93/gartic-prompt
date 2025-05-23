@@ -1,0 +1,40 @@
+version: '3.8' # Specifies the Docker Compose file format version
+
+services:
+  web:
+    build: . # Build the image from the Dockerfile in the current directory
+    container_name: genie_app_web
+    ports:
+      - "5000:5000" # Map port 5000 on the host to port 5000 in the container
+    volumes:
+      # Mount the local genie_app directory into the container at /app/genie_app
+      # This allows for live reloading of Python code changes.
+      # Flask's debug mode should pick up most changes.
+      - ./genie_app:/app/genie_app
+      # Mount the requirements.txt file. If it changes, we'd ideally want to rebuild.
+      # For local dev, if you add a new dependency, you'll need to run 'docker-compose build' or 'docker-compose up --build'.
+      - ./requirements.txt:/app/requirements.txt 
+      # Optional: Mount leaderboard.json to persist it outside the container
+      # and allow it to be inspected/modified locally during development.
+      # If leaderboard.json doesn't exist locally, Docker will create it as a directory first,
+      # which can be problematic. It's better to ensure an empty leaderboard.json file exists locally
+      # before running 'docker-compose up' if using this volume type.
+      # An alternative is a named volume, but for simple file persistence, this direct mount can work
+      # if the file is pre-created.
+      # Let's include it with a comment about pre-creation.
+      - ./leaderboard.json:/app/leaderboard.json # Ensure leaderboard.json exists locally first
+    environment:
+      # FLASK_ENV is deprecated in favor of FLASK_DEBUG for Flask 2.3+
+      # For older Flask versions, FLASK_ENV=development might be used.
+      # The app.py already runs with debug=True, so this might be redundant,
+      # but can be useful for extensions or more explicit configuration.
+      - FLASK_DEBUG=1 # Enables debug mode (which implies FLASK_ENV=development)
+      # Any other environment variables your app might need can go here.
+    # For multi-platform builds (x86/ARM):
+    # The Dockerfile uses a multi-arch base image (python:3.9-slim-bullseye).
+    # Docker Desktop usually handles building for the host architecture automatically.
+    # If you need to explicitly specify the platform for the service, you can add:
+    # platform: linux/amd64  # or linux/arm64
+    # However, it's often better to build multi-arch images using 'docker buildx build --platform linux/amd64,linux/arm64 ...'
+    # and then reference that image here, or let Compose handle it if the Docker engine is configured for it.
+    # For local development, typically no explicit platform tag is needed here if the Dockerfile is well-formed.
