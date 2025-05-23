@@ -1,0 +1,281 @@
+:root {
+    --color-bg: #f0f2f5;
+    --color-container-bg: #ffffff;
+    --color-text: #333333;
+    --color-primary: #007bff;
+    --color-primary-dark: #0056b3;
+    --color-success: #28a745;
+    --color-success-dark: #1e7e34;
+    --color-error: #dc3545;
+    --color-border: #dee2e6;
+    --font-body: Arial, Helvetica, sans-serif;
+    --font-heading: Helvetica, Arial, sans-serif;
+    --spacing-unit: 8px;
+    --border-radius: 4px;
+}
+
+body {
+    font-family: var(--font-body);
+    color: var(--color-text);
+    background-color: var(--color-bg);
+    margin: 0;
+    padding: calc(var(--spacing-unit) * 2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+.container {
+    background-color: var(--color-container-bg);
+    padding: calc(var(--spacing-unit) * 3);
+    border-radius: calc(var(--border-radius) * 2);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 700px; /* Max width for larger screens */
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--spacing-unit) * 2.5);
+}
+
+h1, h2 {
+    font-family: var(--font-heading);
+    margin-top: 0;
+    margin-bottom: calc(var(--spacing-unit) * 1.5);
+}
+
+h1 {
+    color: var(--color-primary);
+    font-size: 2em; /* Adjust as needed */
+}
+
+#gameImage {
+    max-width: 100%;
+    height: auto;
+    max-height: 400px; /* Keep a max height */
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    object-fit: contain; /* Ensures image aspect ratio is maintained */
+}
+
+.game-controls, .score-turns-info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-unit);
+    align-items: center;
+}
+
+#guessInput {
+    padding: calc(var(--spacing-unit) * 1.25);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius);
+    font-size: 1em;
+    width: 100%;
+    max-width: 300px; /* Max width for input */
+    box-sizing: border-box;
+}
+
+button { /* General button styles */
+    padding: calc(var(--spacing-unit) * 1.25) calc(var(--spacing-unit) * 2);
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.2s ease-in-out, transform 0.1s ease;
+    font-weight: bold;
+}
+
+button:hover:not(:disabled) {
+    transform: translateY(-1px);
+}
+
+#submitGuess {
+    background-color: var(--color-primary);
+    color: white;
+}
+#submitGuess:hover:not(:disabled) {
+    background-color: var(--color-primary-dark);
+}
+#submitGuess:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.score-turns-info p {
+    font-size: 1.1em;
+    margin: calc(var(--spacing-unit) * 0.5) 0;
+}
+
+#messageArea {
+    min-height: calc(var(--spacing-unit) * 3);
+    font-weight: bold;
+    font-size: 1.1em;
+    color: var(--color-text); /* Default color, can be overridden for success/error */
+}
+.message-correct {
+    color: var(--color-success);
+}
+.message-incorrect {
+    color: var(--color-error);
+}
+.message-info {
+    color: var(--color-text);
+}
+
+
+/* Game Over and Leaderboard Styles */
+#gameOverSection {
+    margin-top: var(--spacing-unit);
+    padding: calc(var(--spacing-unit) * 2);
+    background-color: #f9f9f9; /* Slightly different from main bg */
+    border-radius: var(--border-radius);
+    border: 1px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-unit);
+}
+
+#gameOverSection h2 {
+    color: var(--color-error);
+    font-size: 1.5em;
+}
+
+#playerName {
+    padding: calc(var(--spacing-unit) * 1.25);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius);
+    font-size: 1em;
+    width: 100%;
+    max-width: 250px; /* Max width for name input */
+    box-sizing: border-box;
+    align-self: center;
+}
+
+#submitScoreButton {
+    background-color: var(--color-success);
+    color: white;
+    align-self: center; /* Center button if its container is flex */
+}
+#submitScoreButton:hover:not(:disabled) {
+    background-color: var(--color-success-dark);
+}
+#submitScoreButton:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+#submitMessageArea {
+    margin-top: var(--spacing-unit);
+    font-size: 0.9em;
+    min-height: calc(var(--spacing-unit) * 2.5);
+    font-weight: bold;
+}
+
+#leaderboardSection {
+    margin-top: calc(var(--spacing-unit) * 2);
+    padding: calc(var(--spacing-unit) * 2);
+    background-color: var(--color-container-bg);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--color-border);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+}
+
+#leaderboardSection h2 {
+    color: var(--color-primary);
+    font-size: 1.5em;
+}
+
+#leaderboardList {
+    list-style-type: decimal;
+    padding-left: calc(var(--spacing-unit) * 2.5); /* Standard padding for lists */
+    text-align: left;
+    margin: 0; /* Remove default margin */
+}
+
+#leaderboardList li {
+    padding: var(--spacing-unit) 0;
+    font-size: 1em;
+    border-bottom: 1px solid #eee;
+    color: var(--color-text);
+}
+
+#leaderboardList li:last-child {
+    border-bottom: none;
+}
+
+#leaderboardList li::marker {
+    font-weight: bold;
+    color: var(--color-primary);
+}
+
+/* Hide elements meant to be controlled by JS initially */
+#gameOverSection[style*="display: none;"] { /* This is a fallback, JS should handle this directly */
+    display: none !important;
+}
+
+/* Responsive Design - Media Queries */
+
+/* Medium Screens (e.g., tablets) */
+@media (max-width: 900px) {
+    .container {
+        padding: calc(var(--spacing-unit) * 2.5);
+        gap: calc(var(--spacing-unit) * 2);
+    }
+
+    h1 {
+        font-size: 1.8em;
+    }
+
+    #gameImage {
+        max-height: 350px;
+    }
+}
+
+/* Small Screens (e.g., mobile phones) */
+@media (max-width: 600px) {
+    body {
+        padding: var(--spacing-unit);
+    }
+
+    .container {
+        padding: calc(var(--spacing-unit) * 2);
+        gap: calc(var(--spacing-unit) * 1.5);
+    }
+
+    h1 {
+        font-size: 1.5em;
+    }
+    
+    h2 {
+        font-size: 1.25em;
+    }
+
+    #gameImage {
+        max-height: 300px;
+    }
+
+    #guessInput, button, #playerName {
+        font-size: 0.95em; /* Slightly smaller but still tappable */
+        padding: var(--spacing-unit); /* Ensure tappable area */
+    }
+    
+    .score-turns-info p {
+        font-size: 1em;
+    }
+
+    #messageArea {
+        font-size: 1em;
+    }
+
+    #leaderboardList li {
+        font-size: 0.95em;
+        padding: calc(var(--spacing-unit)*0.75) 0;
+    }
+
+    #leaderboardSection, #gameOverSection {
+        padding: var(--spacing-unit);
+    }
+}
