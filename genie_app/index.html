@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Genie App</title>
+    <link rel="stylesheet" href="static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Guess the Prompt!</h1>
+        
+        <img id="gameImage" src="" alt="Game Image">
+        
+        <div>
+            <input type="text" id="guessInput" placeholder="Enter your guess">
+            <button id="submitGuess">Submit</button>
+        </div>
+        
+        <p>Score: <span id="scoreDisplay">0</span></p>
+        <p>Turns Left: <span id="turnsDisplay">7</span></p>
+        <p id="messageArea"></p>
+
+        <div id="gameOverSection" style="display: none;">
+            <h2>Game Over!</h2>
+            <p>Your Final Score: <span id="finalScoreDisplay">0</span></p>
+            <input type="text" id="playerName" placeholder="Enter your name">
+            <button id="submitScoreButton">Submit Score</button>
+            <p id="submitMessageArea"></p>
+        </div>
+
+        <div id="leaderboardSection">
+            <h2>Leaderboard</h2>
+            <ol id="leaderboardList"></ol>
+        </div>
+    </div>
+
+    <script src="static/js/script.js"></script>
+</body>
+</html>
