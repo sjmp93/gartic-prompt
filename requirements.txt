@@ -1,2 +1,7 @@
 Flask==2.2.2
 python-Levenshtein==0.23.0
+pytest
+pytest-flask
+sentence-transformers
+torch
+selenium

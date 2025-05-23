@@ -1,0 +1,8 @@
+Flask==2.2.2
+python-Levenshtein==0.23.0
+pytest
+pytest-flask
+Werkzeug==2.2.2
+Jinja2==3.1.2
+itsdangerous==2.1.2
+click==8.1.3

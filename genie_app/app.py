@@ -3,8 +3,16 @@ import random
 import os
 import json
 from Levenshtein import distance as levenshtein_distance
+from sentence_transformers import SentenceTransformer, util
 
 app = Flask(__name__)
+
+# LLM Scoring Configuration
+ENABLE_LLM_SCORING = os.getenv('ENABLE_LLM_SCORING', 'false').lower() == 'true'
+LLM_MODEL_NAME = os.getenv('LLM_MODEL_NAME', 'paraphrase-multilingual-MiniLM-L12-v2')
+llm_model = None
+# Placeholders SentenceTransformer = None and util = None are removed as direct imports are used.
+# Conditional import logic is removed.
 
 LEADERBOARD_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'leaderboard.json')
 LEADERBOARD_MAX_SIZE = 10
@@ -94,13 +102,49 @@ def submit_guess():
     else:
         score = max(0, round((1 - (lev_dist / max_len)) * 100))
     
-    is_correct = (score == 100) # Considered correct only on perfect score
+    lev_score = score # Preserve Levenshtein score
 
-    return jsonify({
+    llm_similarity_score = None # Initialize
+    final_score = lev_score # Default to Levenshtein score
+
+    if ENABLE_LLM_SCORING and llm_model:
+        try:
+            # Generate embeddings
+            prompt_embedding = llm_model.encode(correct_prompt_norm, convert_to_tensor=True)
+            guess_embedding = llm_model.encode(user_guess_norm, convert_to_tensor=True)
+
+            # Calculate cosine similarity
+            cosine_scores = util.cos_sim(prompt_embedding, guess_embedding)
+            similarity = cosine_scores[0][0].item() # Get the single similarity score (float)
+            
+            similarity = max(0.0, min(similarity, 1.0)) 
+
+            llm_similarity_score = round(similarity * 100) # Scale to 0-100
+
+            if llm_similarity_score >= 0: 
+                final_score = round((lev_score + llm_similarity_score) / 2)
+            else: 
+                final_score = lev_score 
+            
+            print(f"LLM scoring active. Levenshtein: {lev_score}, LLM raw sim: {similarity:.4f}, LLM score: {llm_similarity_score}, Final: {final_score}")
+
+        except Exception as e:
+            print(f"Error during LLM scoring: {e}")
+            final_score = lev_score 
+    
+    score = int(final_score) 
+    is_correct = (score == 100) 
+
+    response_data = {
         "correct": is_correct,
-        "score": int(score), # Ensure score is an integer
+        "score": score,
         "correct_prompt": correct_prompt_orig
-    })
+    }
+    if ENABLE_LLM_SCORING and llm_model and llm_similarity_score is not None:
+        response_data["llm_score"] = llm_similarity_score
+        response_data["levenshtein_score"] = lev_score
+    
+    return jsonify(response_data)
 
 @app.route('/api/submit_score', methods=['POST'])
 def submit_score():
@@ -113,24 +157,34 @@ def submit_score():
 
     if not name:
         return jsonify({"error": "Name cannot be empty"}), 400
-    if not isinstance(score, (int, float)): # Allow float scores just in case, though game logic gives int
+    if not isinstance(score, (int, float)): 
         return jsonify({"error": "Score must be a number"}), 400
 
     leaderboard = load_leaderboard()
     leaderboard.append({"name": name, "score": score})
-    save_leaderboard(leaderboard) # save_leaderboard handles sorting and limiting
+    save_leaderboard(leaderboard) 
 
     return jsonify({"message": "Score submitted successfully"}), 201
+
+def load_llm_model():
+    global llm_model
+    if ENABLE_LLM_SCORING: # Original intended logic
+        try:
+            print(f"Attempting to load LLM model: {LLM_MODEL_NAME}...")
+            llm_model = SentenceTransformer(LLM_MODEL_NAME) # Assumes SentenceTransformer is directly imported
+            print(f"LLM model {LLM_MODEL_NAME} loaded successfully.")
+        except Exception as e:
+            print(f"Error loading LLM model {LLM_MODEL_NAME}: {e}")
+            # llm_model remains None; app can run without it if loading fails.
 
 @app.route('/api/get_leaderboard', methods=['GET'])
 def get_leaderboard():
     leaderboard = load_leaderboard()
-    # load_leaderboard already returns sorted and potentially limited data if save_leaderboard is the only writer
-    # However, if we want to be absolutely sure it's limited to N for this endpoint:
     return jsonify(leaderboard[:LEADERBOARD_MAX_SIZE])
 
+# Original unconditional call to load_llm_model.
+# The function itself checks ENABLE_LLM_SCORING.
+load_llm_model()
+
 if __name__ == '__main__':
-    # Make sure the app runs on 0.0.0.0 to be accessible from Docker
-    # and explicitly set the port. Debug should ideally be False for production.
-    # For this project, keeping debug=True for simplicity as per earlier setup.
     app.run(host='0.0.0.0', port=5000, debug=True)
